@@ -15,6 +15,8 @@ type GlobalContextType = {
   setCurrentUser: Dispatch<SetStateAction<string | null>>;
   allUsers: string[];
   setAllUsers: Dispatch<SetStateAction<string[]>>;
+  allChatRooms: string[];
+  setAllChatRooms: Dispatch<SetStateAction<string[]>>;
 };
 
 export const GlobalContext = createContext<GlobalContextType | undefined>(
@@ -30,6 +32,7 @@ function GlobalState({ children }: GlobalStateProps) {
   const [userName, setUserName] = useState("");
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState<string[]>([]);
+  const [allChatRooms, setAllChatRooms] = useState<string[]>([]);
   return (
     <GlobalContext.Provider
       value={{
@@ -41,6 +44,8 @@ function GlobalState({ children }: GlobalStateProps) {
         setCurrentUser,
         allUsers,
         setAllUsers,
+        allChatRooms,
+        setAllChatRooms,
       }}
     >
       {children}
