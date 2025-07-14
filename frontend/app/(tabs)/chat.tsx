@@ -1,28 +1,64 @@
-import { Image } from "expo-image";
-import { Platform, Pressable, StyleSheet } from "react-native";
-import { View } from "react-native";
-import { Text } from "react-native";
-import { useContext } from "react";
-import { GlobalContext } from "../../context";
-import AntDesign from "react-native-vector-icons/AntDesign";
-import { FlatList } from "react-native";
+import { useContext, useEffect } from "react";
+import {
+  FlatList,
+  Pressable,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import { GlobalContext } from "@/context";
+import { AntDesign } from "@expo/vector-icons";
 import Chatcomponent from "@/components/Chatcomponent";
-import { SafeAreaView } from "react-native-safe-area-context";
+import NewGroupModal from "@/components/modal";
+import { socket } from "@/utils";
+import type { StackNavigationProp } from "@react-navigation/stack";
+import type { RouteProp } from "@react-navigation/native";
+import type { GlobalContextType } from "@/context";
 
-export default function Chatscreen() {
-  const context = useContext(GlobalContext);
-  if (!context) {
-    throw new Error(
-      "GlobalContext value is null. Make sure your component is wrapped in a GlobalContext.Provider."
-    );
+type NavigationProp = StackNavigationProp<any, any>;
+
+export default function Chatscreen({
+  navigation,
+}: {
+  navigation: NavigationProp;
+}) {
+  const context = useContext(GlobalContext) as GlobalContextType;
+
+  const {
+    currentUser,
+    allChatRooms,
+    setAllChatRooms,
+    modalVisible,
+    setModalVisible,
+    setCurrentUser,
+    setShowLoginView,
+  } = context;
+
+  useEffect(() => {
+    socket.emit("getAllGroups");
+
+    socket.on("groupList", (groups) => {
+      console.log(groups, "hhhhhhhhhhhhhhhhhhhhhhh");
+      setAllChatRooms(groups);
+    });
+  }, [socket]);
+
+  function handleLogout() {
+    setCurrentUser("");
+    setShowLoginView(false);
   }
-  const { currentUser, allChatRooms } = context;
+
+  useEffect(() => {
+    if (currentUser === "") navigation.navigate("Homescreen");
+  }, [currentUser]);
+
   return (
-    <SafeAreaView style={styles.mainWrapper}>
+    <View style={styles.mainWrapper}>
       <View style={styles.topContainer}>
         <View style={styles.header}>
-          <Text style={styles.heading}>Welcome {currentUser}</Text>
-          <Pressable>
+          <Text style={styles.heading}>Welcome {currentUser}!</Text>
+          <Pressable onPress={handleLogout}>
             <AntDesign name="logout" size={30} color={"black"} />
           </Pressable>
         </View>
@@ -31,75 +67,66 @@ export default function Chatscreen() {
         {allChatRooms && allChatRooms.length > 0 ? (
           <FlatList
             data={allChatRooms}
-            renderItem={({ item }) => <Chatcomponent chatRoom={item} />}
+            renderItem={({ item }) => <Chatcomponent item={item} />}
             keyExtractor={(item) => item.id}
           />
         ) : null}
       </View>
       <View style={styles.bottomContainer}>
-        <Pressable style={styles.button}>
+        <Pressable onPress={() => setModalVisible(true)} style={styles.button}>
           <View>
-            <Text style={styles.buttonText}>Create a new chat room</Text>
+            <Text style={styles.buttonText}>Create New Group</Text>
           </View>
         </Pressable>
       </View>
-    </SafeAreaView>
+      {modalVisible && <NewGroupModal />}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   mainWrapper: {
+    backgroundColor: "#eee",
     flex: 1,
-    backgroundColor: "white",
   },
   topContainer: {
-    padding: 16,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#fff",
+    height: 70,
+    width: "100%",
+    padding: 20,
+    justifyContent: "center",
+    marginBottom: 15,
+    flex: 0.3,
   },
   header: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  heading: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#222",
-  },
-  listContainer: {
-    flex: 1,
-    paddingHorizontal: 10,
-    // Add space for bottomContainer
-  },
-  bottomContainer: {
-    padding: 16,
-    backgroundColor: "#f5f5f5",
-    borderTopWidth: 1,
-    borderColor: "#ddd",
-    marginBottom: Platform.OS === "ios" ? 60 : 0, // Adjust for iOS SafeArea
-    // Remove absolute positioning to make it visible within SafeAreaView
-  },
-  image: {
-    width: "100%",
-    height: 200,
-  },
-  text: {
-    fontSize: 16,
-    color: "#333",
-    marginVertical: 10,
-  },
-  button: {
-    backgroundColor: "gray",
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
     alignItems: "center",
     justifyContent: "center",
-    marginVertical: 0,
+  },
+  heading: {
+    fontSize: 30,
+    fontWeight: "bold",
+    textDecorationLine: "underline",
+  },
+  listContainer: {
+    flex: 3.4,
+    paddingHorizontal: 10,
+  },
+  bottomContainer: {
+    flex: 0.3,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: "#703efe",
+    padding: 12,
+    width: "100%",
+    elevation: 1,
+    borderRadius: 50,
   },
   buttonText: {
-    color: "black",
-    fontSize: 16,
+    textAlign: "center",
+    color: "#fff",
     fontWeight: "bold",
+    fontSize: 20,
   },
 });

@@ -17,6 +17,12 @@ type GlobalContextType = {
   setAllUsers: Dispatch<SetStateAction<string[]>>;
   allChatRooms: string[];
   setAllChatRooms: Dispatch<SetStateAction<string[]>>;
+  modalVisible: boolean;
+  setModalVisible: Dispatch<SetStateAction<boolean>>;
+  currentGroupName: string;
+  setCurrentGroupName: Dispatch<SetStateAction<string>>;
+  messages: string[];
+  setMessages: Dispatch<SetStateAction<string[]>>;
 };
 
 export const GlobalContext = createContext<GlobalContextType | undefined>(
@@ -33,6 +39,9 @@ function GlobalState({ children }: GlobalStateProps) {
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [allUsers, setAllUsers] = useState<string[]>([]);
   const [allChatRooms, setAllChatRooms] = useState<string[]>([]);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [currentGroupName, setCurrentGroupName] = useState("");
+  const [messages, setMessages] = useState<string[]>([]);
   return (
     <GlobalContext.Provider
       value={{
@@ -46,6 +55,12 @@ function GlobalState({ children }: GlobalStateProps) {
         setAllUsers,
         allChatRooms,
         setAllChatRooms,
+        modalVisible,
+        setModalVisible,
+        currentGroupName,
+        setCurrentGroupName,
+        messages,
+        setMessages,
       }}
     >
       {children}
