@@ -1,54 +1,54 @@
-import React, {
+import {
   createContext,
   useState,
-  ReactNode,
   Dispatch,
   SetStateAction,
+  ReactNode,
 } from "react";
 
 type GlobalContextType = {
   showLoginView: boolean;
   setShowLoginView: Dispatch<SetStateAction<boolean>>;
-  userName: string;
-  setUserName: Dispatch<SetStateAction<string>>;
-  currentUser: string | null;
-  setCurrentUser: Dispatch<SetStateAction<string | null>>;
-  allUsers: string[];
-  setAllUsers: Dispatch<SetStateAction<string[]>>;
-  allChatRooms: string[];
-  setAllChatRooms: Dispatch<SetStateAction<string[]>>;
+  currentUserName: string;
+  setCurrentUserName: Dispatch<SetStateAction<string>>;
+  currentUser: string;
+  setCurrentUser: Dispatch<SetStateAction<string>>;
+  allUsers: any[];
+  setAllUsers: Dispatch<SetStateAction<any[]>>;
+  allChatRooms: any[];
+  setAllChatRooms: Dispatch<SetStateAction<any[]>>;
   modalVisible: boolean;
   setModalVisible: Dispatch<SetStateAction<boolean>>;
   currentGroupName: string;
   setCurrentGroupName: Dispatch<SetStateAction<string>>;
-  messages: string[];
-  setMessages: Dispatch<SetStateAction<string[]>>;
+  allChatMessages: any[];
+  setAllChatMessages: Dispatch<SetStateAction<any[]>>;
+  currentChatMesage: string;
+  setCurrentChatMessage: Dispatch<SetStateAction<string>>;
 };
 
 export const GlobalContext = createContext<GlobalContextType | undefined>(
   undefined
 );
 
-type GlobalStateProps = {
-  children: ReactNode;
-};
-
-function GlobalState({ children }: GlobalStateProps) {
+function GlobalState({ children }: { children: ReactNode }) {
   const [showLoginView, setShowLoginView] = useState(false);
-  const [userName, setUserName] = useState("");
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [allUsers, setAllUsers] = useState<string[]>([]);
-  const [allChatRooms, setAllChatRooms] = useState<string[]>([]);
+  const [currentUserName, setCurrentUserName] = useState("");
+  const [currentUser, setCurrentUser] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+  const [allChatRooms, setAllChatRooms] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [currentGroupName, setCurrentGroupName] = useState("");
-  const [messages, setMessages] = useState<string[]>([]);
+  const [allChatMessages, setAllChatMessages] = useState([]);
+  const [currentChatMesage, setCurrentChatMessage] = useState("");
+
   return (
     <GlobalContext.Provider
       value={{
         showLoginView,
         setShowLoginView,
-        userName,
-        setUserName,
+        currentUserName,
+        setCurrentUserName,
         currentUser,
         setCurrentUser,
         allUsers,
@@ -59,8 +59,10 @@ function GlobalState({ children }: GlobalStateProps) {
         setModalVisible,
         currentGroupName,
         setCurrentGroupName,
-        messages,
-        setMessages,
+        allChatMessages,
+        setAllChatMessages,
+        currentChatMesage,
+        setCurrentChatMessage,
       }}
     >
       {children}
